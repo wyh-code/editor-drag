@@ -1,10 +1,8 @@
 export interface BlockType {
   top: number;
   left: number;
-}
-
-export interface Props {
-  drag: any;
+  componentKey: string;
+  adjustPosition: boolean;
 }
 
 export interface EditorState {
@@ -15,9 +13,10 @@ export interface EditorState {
   blocks?: BlockType[];
 }
 
-export interface ContainerProps extends Props {
+export interface ContainerProps {
   editorState: EditorState;
   setContainer: any;
+  componentsMap: EditorComponentMap;
 }
 
 export interface EditorComponent {
@@ -31,6 +30,7 @@ export interface EditorComponentMap {
   [key: string]: EditorComponent;
 }
 
-export interface MenuProps extends Props {
+export interface MenuProps {
   config: EditorComponent[];
+  drag: any;
 }

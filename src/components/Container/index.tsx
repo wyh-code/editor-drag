@@ -4,8 +4,8 @@ import { EditorState, ContainerProps } from '@/util/type';
 
 export default function IndexPage({
   editorState,
-  drag,
   setContainer,
+  componentsMap,
 }: ContainerProps) {
   const containerRef = useRef(null);
   const { container, blocks } = editorState as EditorState;
@@ -35,7 +35,9 @@ export default function IndexPage({
               top: `${item.top}px`,
             }}
           >
-            block
+            {typeof componentsMap[item.componentKey].render === 'string'
+              ? componentsMap[item.componentKey].render
+              : componentsMap[item.componentKey].render()}
           </div>
         ))}
       </div>

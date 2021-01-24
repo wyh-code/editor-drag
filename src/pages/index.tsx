@@ -17,51 +17,62 @@ export default function IndexPage() {
   const [state, setState] = useState<EditorState>(editorState);
   const [container, setContainer] = useState<null | HTMLElement>(null);
 
-  const drag = {
-    current: {
-      component: null as null | EditorComponent,
-    },
-    onDragStart: (e: HTMLElement, component: EditorComponent) => {
-      container?.addEventListener('dragenter', drag.onDragEnter);
-      container?.addEventListener('dragover', drag.onDragOver);
-      container?.addEventListener('dragleave', drag.onDragLeave);
-      container?.addEventListener('drop', drag.onDrop);
+  const drag = (() => {
+    let component = null as null | EditorComponent;
 
-      drag.current.component = component;
-    },
-    onDragEnd: (e: HTMLElement, component: EditorComponent) => {
-      container?.addEventListener('dragenter', drag.onDragEnter);
-      container?.addEventListener('dragover', drag.onDragOver);
-      container?.addEventListener('dragleave', drag.onDragLeave);
-      container?.addEventListener('drop', drag.onDrop);
-    },
-    onDragEnter: (e: DragEvent) => {
-      e.dataTransfer!.dropEffect = 'move';
-    },
-    onDragOver: (e: DragEvent) => {
-      e.preventDefault();
-    },
-    onDragLeave: (e: DragEvent) => {
-      e.dataTransfer!.dropEffect = 'none';
-    },
-    onDrop: (e: DragEvent) => {
-      const { blocks } = state;
-      // console.log('drop', drag.current.component)
-      blocks?.push({
-        left: e.offsetX,
-        top: e.offsetY,
-      });
+    const containerHandler = {
+      onDragEnter: (e: DragEvent) => {
+        e.dataTransfer!.dropEffect = 'move';
+      },
+      onDragOver: (e: DragEvent) => {
+        e.preventDefault();
+      },
+      onDragLeave: (e: DragEvent) => {
+        e.dataTransfer!.dropEffect = 'none';
+      },
+      onDrop: (e: DragEvent) => {
+        const { blocks } = state;
+        blocks?.push({
+          left: e.offsetX,
+          top: e.offsetY,
+          componentKey: component!.key,
+          adjustPosition: true,
+        });
 
-      setState({ ...state });
-    },
-  };
+        setState({ ...state });
+      },
+    };
+
+    return {
+      onDragStart: (e: HTMLElement, current: EditorComponent) => {
+        container?.addEventListener('dragenter', containerHandler.onDragEnter);
+        container?.addEventListener('dragover', containerHandler.onDragOver);
+        container?.addEventListener('dragleave', containerHandler.onDragLeave);
+        container?.addEventListener('drop', containerHandler.onDrop);
+
+        component = current;
+      },
+      onDragEnd: (e: HTMLElement) => {
+        container?.addEventListener('dragenter', containerHandler.onDragEnter);
+        container?.addEventListener('dragover', containerHandler.onDragOver);
+        container?.addEventListener('dragleave', containerHandler.onDragLeave);
+        container?.addEventListener('drop', containerHandler.onDrop);
+
+        component = null;
+      },
+    };
+  })();
 
   return (
     <div className={styles.editor}>
       <Menu drag={drag} config={creatConfig.componentsList} />
       <Head />
       <Operator />
-      <Container setContainer={setContainer} editorState={state} drag={drag} />
+      <Container
+        setContainer={setContainer}
+        editorState={state}
+        componentsMap={creatConfig.componentsMap}
+      />
     </div>
   );
 }

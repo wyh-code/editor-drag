@@ -5,12 +5,7 @@ export const editorState = {
     width: 900,
     height: 700,
   },
-  blocks: [
-    {
-      top: 100,
-      left: 100,
-    },
-  ],
+  blocks: [],
 };
 
 export const editorConfig = [

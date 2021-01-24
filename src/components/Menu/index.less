@@ -1,0 +1,47 @@
+@import '../../global.less';
+
+.menu {
+  position: absolute;
+  z-index: 9;
+  background-color: @bg;
+  width: @memuWidth;
+  overflow-y: scroll;
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  .menuItem {
+    border: 3px solid @bc;
+    margin: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 40px;
+
+    &:hover {
+      border-color: @primary;
+    }
+
+    &::after {
+      position: absolute;
+      content: '';
+      z-index: 4;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      cursor: move;
+    }
+
+    .label {
+      position: absolute;
+      left: -3px;
+      top: -3px;
+      background: @primary;
+      color: #fff;
+      padding: 2px 5px;
+      z-index: 2;
+    }
+  }
+}

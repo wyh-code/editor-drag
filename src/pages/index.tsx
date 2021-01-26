@@ -32,12 +32,15 @@ export default function IndexPage() {
       },
       onDrop: (e: DragEvent) => {
         const { blocks } = state;
-        console.log('-----ondrop----');
+
         blocks?.push({
+          offsetHeight: 0,
+          offsetWidth: 0,
           left: e.offsetX,
           top: e.offsetY,
           componentKey: component!.key,
           adjustPosition: true,
+          focus: false,
         });
 
         setState({ ...state });
@@ -50,24 +53,16 @@ export default function IndexPage() {
         container!.ondragover = containerHandler.onDragOver;
         container!.ondragleave = containerHandler.onDragLeave;
         container!.ondrop = containerHandler.onDrop;
-        // container?.addEventListener('dragenter', containerHandler.onDragEnter);
-        // container?.addEventListener('dragover', containerHandler.onDragOver);
-        // container?.addEventListener('dragleave', containerHandler.onDragLeave);
-        // container?.addEventListener('drop', containerHandler.onDrop);
-        console.log('------1-----');
 
         component = current;
       },
       onDragEnd: (e: HTMLElement) => {
-        // container?.removeEventListener('dragenter', containerHandler.onDragEnter);
-        // container?.removeEventListener('dragover', containerHandler.onDragOver);
-        // container?.removeEventListener('dragleave', containerHandler.onDragLeave);
-        // container?.removeEventListener('drop', containerHandler.onDrop);
-        console.log('-----2------');
         component = null;
       },
     };
   })();
+
+  const refresh = () => setState(JSON.parse(JSON.stringify(state)));
 
   return (
     <div className={styles.editor}>
@@ -78,6 +73,7 @@ export default function IndexPage() {
         setContainer={setContainer}
         editorState={state}
         componentsMap={creatConfig.componentsMap}
+        refresh={refresh}
       />
     </div>
   );

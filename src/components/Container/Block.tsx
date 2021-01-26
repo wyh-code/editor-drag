@@ -2,7 +2,11 @@ import { useRef, useEffect, useState } from 'react';
 import styles from './index.less';
 import { BlockProps } from '@/util/type';
 
-export default function IndexPage({ block, componentsMap }: BlockProps) {
+export default function IndexPage({
+  block,
+  componentsMap,
+  onMouseDown,
+}: BlockProps) {
   const blockRef = useRef(null);
   const [offsetHeight, setOffsetHeight] = useState(0);
   const [offsetWidth, setOffsetWidth] = useState(0);
@@ -12,15 +16,19 @@ export default function IndexPage({ block, componentsMap }: BlockProps) {
       const { offsetWidth, offsetHeight } = blockRef?.current as any;
       setOffsetHeight(offsetHeight);
       setOffsetWidth(offsetWidth);
-      console.log(blockRef?.current, 'blockRef.current');
-      console.log(offsetWidth, 'blockRef.current', offsetHeight);
+
+      // 更新数据
+      block.adjustPosition = false;
+      block.offsetWidth = offsetWidth;
+      block.offsetHeight = offsetHeight;
     }
   }, []);
 
   return (
     <div
       ref={blockRef}
-      className={styles.blockItem}
+      className={`${styles.blockItem} ${block.focus && styles.blockFocus}`}
+      onMouseDown={(e) => onMouseDown(e, block)}
       style={{
         left: `${left - offsetWidth / 2}px`,
         top: `${top - offsetHeight / 2}px`,

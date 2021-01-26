@@ -29,6 +29,10 @@ export interface EditorComponent {
 export interface EditorComponentMap {
   [key: string]: EditorComponent;
 }
+export interface BlockProps {
+  block: BlockType;
+  componentsMap: EditorComponentMap;
+}
 
 export interface MenuProps {
   config: EditorComponent[];

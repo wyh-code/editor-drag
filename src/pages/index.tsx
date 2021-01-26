@@ -32,6 +32,7 @@ export default function IndexPage() {
       },
       onDrop: (e: DragEvent) => {
         const { blocks } = state;
+        console.log('-----ondrop----');
         blocks?.push({
           left: e.offsetX,
           top: e.offsetY,
@@ -45,19 +46,24 @@ export default function IndexPage() {
 
     return {
       onDragStart: (e: HTMLElement, current: EditorComponent) => {
-        container?.addEventListener('dragenter', containerHandler.onDragEnter);
-        container?.addEventListener('dragover', containerHandler.onDragOver);
-        container?.addEventListener('dragleave', containerHandler.onDragLeave);
-        container?.addEventListener('drop', containerHandler.onDrop);
+        container!.ondragenter = containerHandler.onDragEnter;
+        container!.ondragover = containerHandler.onDragOver;
+        container!.ondragleave = containerHandler.onDragLeave;
+        container!.ondrop = containerHandler.onDrop;
+        // container?.addEventListener('dragenter', containerHandler.onDragEnter);
+        // container?.addEventListener('dragover', containerHandler.onDragOver);
+        // container?.addEventListener('dragleave', containerHandler.onDragLeave);
+        // container?.addEventListener('drop', containerHandler.onDrop);
+        console.log('------1-----');
 
         component = current;
       },
       onDragEnd: (e: HTMLElement) => {
-        container?.addEventListener('dragenter', containerHandler.onDragEnter);
-        container?.addEventListener('dragover', containerHandler.onDragOver);
-        container?.addEventListener('dragleave', containerHandler.onDragLeave);
-        container?.addEventListener('drop', containerHandler.onDrop);
-
+        // container?.removeEventListener('dragenter', containerHandler.onDragEnter);
+        // container?.removeEventListener('dragover', containerHandler.onDragOver);
+        // container?.removeEventListener('dragleave', containerHandler.onDragLeave);
+        // container?.removeEventListener('drop', containerHandler.onDrop);
+        console.log('-----2------');
         component = null;
       },
     };

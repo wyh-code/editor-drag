@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import styles from './index.less';
 import { EditorState, ContainerProps } from '@/util/type';
+import Block from './Block';
 
 export default function IndexPage({
   editorState,
@@ -26,19 +27,8 @@ export default function IndexPage({
           height: `${container.height}px`,
         }}
       >
-        {blocks?.map((item, index) => (
-          <div
-            key={index}
-            className={styles.blockItem}
-            style={{
-              left: `${item.left}px`,
-              top: `${item.top}px`,
-            }}
-          >
-            {typeof componentsMap[item.componentKey].render === 'string'
-              ? componentsMap[item.componentKey].render
-              : componentsMap[item.componentKey].render()}
-          </div>
+        {blocks?.map((block, index) => (
+          <Block key={index} block={block} componentsMap={componentsMap} />
         ))}
       </div>
     </div>

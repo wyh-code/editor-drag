@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import styles from './index.less';
 import { EditorState, ContainerProps, BlockType } from '@/util/type';
 import Block from './Block';
@@ -11,6 +11,7 @@ export default function IndexPage({
 }: ContainerProps) {
   const containerRef = useRef(null);
   const { container, blocks } = editorState as EditorState;
+  const [scrollTop, setScrollTop] = useState<number>(0);
 
   useEffect(() => {
     if (containerRef?.current) {
@@ -24,26 +25,48 @@ export default function IndexPage({
       x: 0,
       y: 0,
     };
+    const mousemove = (e: MouseEvent) => {
+      const offsetTop = e.clientY - dragStart.y;
+      const offsetLeft = e.clientX - dragStart.x;
 
-    const mousemove = () => {
-      console.log('mousemove');
+      // 更新鼠标位置，作为下次偏移计算的原点
+      dragStart.y = e.clientY;
+      dragStart.x = e.clientX;
+
+      blocks?.forEach((item) => {
+        if (item.focus) {
+          item.left = item.left + offsetLeft;
+          item.top = item.top + offsetTop;
+        }
+      });
+      refresh && refresh();
     };
+
     const mouseup = () => {
-      console.log('mouseup');
+      document.onmousemove = null;
+    };
+
+    const onscroll = (e: MouseEvent) => {
+      const dom = e.target as any;
+
+      blocks?.forEach((item) => {
+        if (item.focus) {
+          item.top = item.top + dom?.scrollTop - scrollTop;
+        }
+      });
+
+      setScrollTop(dom?.scrollTop);
     };
 
     return {
       onMouseDown: (e: MouseEvent) => {
         dragStart.x = e.clientX;
-        dragStart.y = e.clientX;
+        dragStart.y = e.clientY;
 
-        document.addEventListener('mousemove', mousemove);
-        document.addEventListener('mouseup', mouseup);
+        document.onmousemove = mousemove;
+        document.onmouseup = mouseup;
       },
-      mouseup: () => {
-        document.removeEventListener('mousemove', mousemove);
-        document.removeEventListener('mouseup', mouseup);
-      },
+      onscroll,
     };
   })();
 
@@ -94,9 +117,12 @@ export default function IndexPage({
   })();
 
   return (
-    <div className={styles.container}>
+    <div
+      ref={containerRef}
+      className={styles.container}
+      onScroll={blockDragger.onscroll as any}
+    >
       <div
-        ref={containerRef}
         className={styles.content}
         style={{
           width: `${container.width}px`,

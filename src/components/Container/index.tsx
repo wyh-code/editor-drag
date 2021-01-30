@@ -9,9 +9,8 @@ export default function IndexPage({
   componentsMap,
   refresh,
 }: ContainerProps) {
-  const containerRef = useRef(null);
+  const containerRef = useRef({} as any);
   const { container, blocks } = editorState as EditorState;
-  const [scrollTop, setScrollTop] = useState<number>(0);
 
   useEffect(() => {
     if (containerRef?.current) {
@@ -24,6 +23,7 @@ export default function IndexPage({
     const dragStart = {
       x: 0,
       y: 0,
+      scrollTop: 0,
     };
     const mousemove = (e: MouseEvent) => {
       const offsetTop = e.clientY - dragStart.y;
@@ -51,11 +51,11 @@ export default function IndexPage({
 
       blocks?.forEach((item) => {
         if (item.focus) {
-          item.top = item.top + dom?.scrollTop - scrollTop;
+          item.top = item.top + dom?.scrollTop - dragStart.scrollTop;
         }
       });
-
-      setScrollTop(dom?.scrollTop);
+      dragStart.scrollTop = dom?.scrollTop;
+      refresh && refresh();
     };
 
     return {
@@ -65,8 +65,8 @@ export default function IndexPage({
 
         document.onmousemove = mousemove;
         document.onmouseup = mouseup;
+        containerRef.current.onscroll = onscroll;
       },
-      onscroll,
     };
   })();
 
@@ -117,11 +117,7 @@ export default function IndexPage({
   })();
 
   return (
-    <div
-      ref={containerRef}
-      className={styles.container}
-      onScroll={blockDragger.onscroll as any}
-    >
+    <div ref={containerRef} className={styles.container}>
       <div
         className={styles.content}
         style={{
